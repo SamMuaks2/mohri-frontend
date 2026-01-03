@@ -12,17 +12,17 @@ const links = [
 
 export default function Navbar() {
   return (
-    <nav className="border-b border-gray-800">
+    <nav className="border-b border-yellow-600/50 bg-black">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/" className="font-bold text-xl">
-          Mohri<span className="text-blue-500">.</span>
+        <Link href="/" className="font-bold text-xl text-white">
+          Mohri<span className="text-yellow-500">.</span>
         </Link>
         <div className="space-x-6 hidden md:flex">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="hover:text-blue-400 transition"
+              className="text-gray-300 hover:text-yellow-500 transition"
             >
               {link.label}
             </Link>
