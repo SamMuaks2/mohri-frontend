@@ -297,10 +297,10 @@
 
 
 
-
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import DOMPurify from "dompurify";
 import ShareButtons from "@/components/ShareButtons";
 import type { Article } from "./page";
@@ -315,6 +315,12 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           <ArticleCard key={article.id} article={article} />
         ))}
       </div>
+
+      {articles.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No articles published yet.</p>
+        </div>
+      )}
     </section>
   );
 }
@@ -332,31 +338,45 @@ function ArticleCard({ article }: { article: Article }) {
 
   return (
     <>
-      <div
-        onClick={() => setIsOpen(true)}
-        className="group border border-yellow-600/40 bg-zinc-950 p-6 rounded-xl cursor-pointer hover:border-yellow-500 transition"
-      >
-        <h3 className="text-xl font-semibold text-white group-hover:text-yellow-500">
-          {article.title}
-        </h3>
+      <Link href={`/articles/${article.id}`}>
+        <div className="group border border-yellow-600/40 bg-zinc-950 p-6 rounded-xl cursor-pointer hover:border-yellow-500 transition">
+          <h3 className="text-xl font-semibold text-white group-hover:text-yellow-500">
+            {article.title}
+          </h3>
 
-        <p className="text-gray-400 mt-2 line-clamp-3">
-          {article.description || getTextPreview(article.content).slice(0, 150) + '...'}
-        </p>
+          <p className="text-gray-400 mt-2 line-clamp-3">
+            {article.description || getTextPreview(article.content).slice(0, 150) + '...'}
+          </p>
 
-        <div className="flex flex-wrap gap-2 mt-4">
-          {article.tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded"
+          <div className="flex flex-wrap gap-2 mt-4">
+            {article.tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between mt-4">
+            <span className="text-sm text-gray-500">{article.date}</span>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsOpen(true);
+              }}
+              className="text-sm text-yellow-500 hover:text-yellow-400 flex items-center gap-1"
             >
-              {tag}
-            </span>
-          ))}
+              Quick View
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
         </div>
-
-        <div className="mt-4 text-sm text-gray-500">{article.date}</div>
-      </div>
+      </Link>
 
       {isOpen && (
         <ArticleModal article={article} onClose={() => setIsOpen(false)} />
@@ -427,9 +447,15 @@ function ArticleModal({
         />
 
         <div className="mt-8 flex justify-end gap-3">
+          <Link
+            href={`/articles/${article.id}`}
+            className="border border-yellow-500 text-yellow-500 px-6 py-2 rounded-lg hover:bg-yellow-500 hover:text-black transition"
+          >
+            Read Full Article
+          </Link>
           <button
             onClick={onClose}
-            className="border border-yellow-500 text-yellow-500 px-6 py-2 rounded-lg hover:bg-yellow-500 hover:text-black transition"
+            className="bg-yellow-600 text-black px-6 py-2 rounded-lg hover:bg-yellow-500 transition"
           >
             Close
           </button>
@@ -442,7 +468,6 @@ function ArticleModal({
             line-height: 1.6;
           }
 
-          /* Headings */
           .article-content h1 {
             font-size: 2em;
             font-weight: bold;
@@ -471,14 +496,12 @@ function ArticleModal({
             margin: 1em 0;
           }
 
-          /* Paragraphs */
           .article-content p {
             color: #fff;
             margin: 1em 0;
             line-height: 1.6;
           }
 
-          /* Lists */
           .article-content ul,
           .article-content ol {
             color: #fff;
@@ -490,7 +513,6 @@ function ArticleModal({
             margin: 0.5em 0;
           }
 
-          /* Links */
           .article-content a {
             color: #eab308;
             text-decoration: underline;
@@ -500,7 +522,6 @@ function ArticleModal({
             color: #facc15;
           }
 
-          /* Images */
           .article-content img {
             max-width: 100%;
             height: auto;
@@ -508,7 +529,6 @@ function ArticleModal({
             margin: 1em 0;
           }
 
-          /* Text formatting */
           .article-content strong {
             font-weight: bold;
           }
@@ -525,7 +545,6 @@ function ArticleModal({
             text-decoration: line-through;
           }
 
-          /* Blockquotes */
           .article-content blockquote {
             border-left: 4px solid #eab308;
             padding-left: 1em;
@@ -533,7 +552,6 @@ function ArticleModal({
             color: #d4d4d8;
           }
 
-          /* Code */
           .article-content code {
             background-color: #1a1a1a;
             color: #eab308;
@@ -556,7 +574,6 @@ function ArticleModal({
             padding: 0;
           }
 
-          /* Quill-specific classes */
           .article-content .ql-align-center {
             text-align: center;
           }
@@ -569,7 +586,6 @@ function ArticleModal({
             text-align: justify;
           }
 
-          /* Indentation */
           .article-content .ql-indent-1 {
             padding-left: 3em;
           }
@@ -582,12 +598,6 @@ function ArticleModal({
             padding-left: 9em;
           }
 
-          /* Color classes (Quill uses inline styles, but just in case) */
-          .article-content .ql-color-white {
-            color: #fff;
-          }
-
-          /* Font sizes */
           .article-content .ql-size-small {
             font-size: 0.75em;
           }
@@ -598,15 +608,6 @@ function ArticleModal({
 
           .article-content .ql-size-huge {
             font-size: 2.5em;
-          }
-
-          @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-
-          .animate-fade-in {
-            animation: fade-in 0.3s ease-in;
           }
         `}</style>
       </div>
