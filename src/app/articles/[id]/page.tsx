@@ -157,13 +157,31 @@ type Article = {
 
 async function getArticle(id: string): Promise<Article | null> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles/${id}`, {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    if (!apiUrl) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+
+    console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
+    
+    const res = await fetch(`${apiUrl}/articles/${id}`, {
       cache: "no-store",
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-    if (!res.ok) return null;
+    console.log(`Article fetch response status: ${res.status}`);
+
+    if (!res.ok) {
+      console.error(`Failed to fetch article: ${res.status} ${res.statusText}`);
+      return null;
+    }
 
     const article = await res.json();
+    console.log(`Article fetched successfully: ${article.title}`);
     return article;
   } catch (error) {
     console.error("Error fetching article:", error);
