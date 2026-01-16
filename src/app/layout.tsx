@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PageViewTracker from "@/components/PageViewTracker";
 
 export const metadata = {
   title: "Mohri Muakpo | Fullstack & Cloud Engineer",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white">
+        <PageViewTracker />
         <Navbar />
         <main className="max-w-7xl mx-auto px-6 py-10">{children}</main>
         <Footer />
